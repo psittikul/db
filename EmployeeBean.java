@@ -1,5 +1,5 @@
 import java.sql.*;
-import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.*;
 
 /**
  * Main class for all operations between Employee objects and the database, i.e. establishing the connection,
@@ -13,8 +13,11 @@ public class EmployeeBean {
 	static final String DB_URL = "jdbc:mysql://localhost/EMP";
 	static final String DB_USER = "root";
 	static final String DB_PASS = "JimYosh4064";
+	static ResultSet rs;
+	static Connection connect;
+	static Statement state;
+
 	
-	private CachedRowSet rowSet;
 	public static void main (String [] args) {
 		Connection conn = null;
 		Statement stmt = null;
@@ -32,7 +35,7 @@ public class EmployeeBean {
 			stmt = conn.createStatement();
 			String sql;
 			sql = "SELECT personId, firstName, lastName, email, company FROM Employees";
-			ResultSet rs = stmt.executeQuery(sql);
+			rs = stmt.executeQuery(sql);
 			
 			//STEP 5: Extract data from result set
 			while (rs.next()) {
@@ -49,10 +52,6 @@ public class EmployeeBean {
 				System.out.print(" " + comp);
 			}
 			
-			//STEP 6: Clean up environment
-			rs.close();
-			stmt.close();
-			conn.close();
 		}catch(SQLException se) {
 			se.printStackTrace();
 		}catch(Exception e) {
@@ -77,22 +76,25 @@ public class EmployeeBean {
 
 	public Employee create(Employee emp) {
 		try {
-			rowSet.moveToInsertRow();
-			rowSet.updateInt("personId", emp.getPersonId());
-			rowSet.updateString("firstName", emp.getFirstName());
-			rowSet.updateString("lastName", emp.getLastName());
-			rowSet.updateString("email", emp.getEmail());
-			rowSet.updateString("company", emp.getCompany());
-			rowSet.insertRow();
-			rowSet.moveToCurrentRow();
+			Class.forName(JDBC_DRIVER);
+			connect = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+			state = connect.createStatement();
+			String query = (" insert into Employees (personId, firstName, lastName,"
+					+ " email, company values (?, ?, ?, ?, ?");
+			PreparedStatement preparedStmt = connect.prepareStatement(query);
+			preparedStmt.setInt(1, emp.getPersonId());
+			preparedStmt.setString(2, emp.getFirstName());
+			preparedStmt.setString(3,  emp.getLastName());
+			preparedStmt.setString(4, emp.getEmail());
+			preparedStmt.setString(5, emp.getCompany());
+			
+			//execute the prepared statement
+			preparedStmt.execute();
+			connect.close();
 		} catch (SQLException ex) {
-			try {
-				rowSet.rollback();
-				emp = null;
-			} catch (SQLException e) {
-				
-			}
 			ex.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 		return emp;
 	}
@@ -100,12 +102,12 @@ public class EmployeeBean {
 	public Employee getCurrent() {
 		Employee emp = new Employee();
 		try {
-			rowSet.moveToCurrentRow();
-			emp.setPersonId(rowSet.getInt("personId"));
-			emp.setFirstName(rowSet.getString("firstName"));
-			emp.setLastName(rowSet.getString("lastName"));
-			emp.setEmail(rowSet.getString("email"));
-			emp.setCompany(rowSet.getString("company"));
+			rs.moveToCurrentRow();
+			emp.setPersonId(rs.getInt("personId"));
+			emp.setFirstName(rs.getString("firstName"));
+			emp.setLastName(rs.getString("lastName"));
+			emp.setEmail(rs.getString("email"));
+			emp.setCompany(rs.getString("company"));
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -115,12 +117,9 @@ public class EmployeeBean {
 
 	public void delete() {
 		try {
-			rowSet.moveToCurrentRow();
-			rowSet.deleteRow();
+			rs.moveToCurrentRow();
+			rs.deleteRow();
 		} catch (SQLException ex) {
-			try {
-				rowSet.rollback();
-			} catch (SQLException e) { }
 			ex.printStackTrace();
 		}
 		
@@ -128,18 +127,13 @@ public class EmployeeBean {
 
 	public Employee update(Employee emp) {
 		try {
-			rowSet.updateString("firstName", emp.getFirstName());
-			rowSet.updateString("lastName", emp.getLastName());
-			rowSet.updateString("email", emp.getEmail());
-			rowSet.updateString("company", emp.getCompany());
-			rowSet.updateRow();
-			rowSet.moveToCurrentRow();
+			rs.updateString("firstName", emp.getFirstName());
+			rs.updateString("lastName", emp.getLastName());
+			rs.updateString("email", emp.getEmail());
+			rs.updateString("company", emp.getCompany());
+			rs.updateRow();
+			rs.moveToCurrentRow();
 		} catch (SQLException ex) {
-			try {
-				rowSet.rollback();
-			} catch (SQLException e) {
-				
-			}
 			ex.printStackTrace();
 		}
 		return emp;

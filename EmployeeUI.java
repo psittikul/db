@@ -5,6 +5,8 @@ import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import net.miginfocom.swing.MigLayout;
+
 public class EmployeeUI extends JPanel {
 
 	/**
@@ -13,13 +15,16 @@ public class EmployeeUI extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	NumberFormat amountFormat = NumberFormat.getNumberInstance();
-	private int personId;
+	private int personId = 0;
 	private JTextField personIdField = new JFormattedTextField(amountFormat);
-	private JTextField fNameField, lNameField, emailField, companyField = new JTextField(30); 
-	private JButton createButton = new JButton ("New");
+	private JTextField fNameField = new JTextField(30);
+	private JTextField lNameField = new JTextField(30);
+	private JTextField emailField = new JTextField(30);
+	private JTextField companyField = new JTextField(30);
+	private JButton createButton = new JButton ("Save");
 	private JButton updateButton = new JButton ("Update");
 	private JButton deleteButton = new JButton ("Delete");
-	private JButton searchButton = new JButton ("Search Client");
+	private JButton newButton = new JButton ("New");
 	private JButton totalButton = new JButton ("Current Totals");
 	
 	private EmployeeBean bean = new EmployeeBean();
@@ -41,8 +46,8 @@ public class EmployeeUI extends JPanel {
 		      updateButton.addActionListener(new ButtonHandler());
 		      panel.add(deleteButton);
 		      deleteButton.addActionListener(new ButtonHandler());
-		      panel.add(searchButton);
-		      searchButton.addActionListener(new ButtonHandler());
+		      panel.add(newButton);
+		      newButton.addActionListener(new ButtonHandler());
 		      panel.add(totalButton);
 		      totalButton.addActionListener(new ButtonHandler());
 		      return panel;
@@ -50,7 +55,7 @@ public class EmployeeUI extends JPanel {
 
 		   private JPanel initFields() {
 		      JPanel panel = new JPanel();
-		      panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
+		      panel.setLayout(new MigLayout());
 		      panel.add(new JLabel("ID"), "align label");
 		      panel.add(personIdField, "wrap");
 		      personIdField.setEnabled(false);
@@ -76,7 +81,7 @@ public class EmployeeUI extends JPanel {
 		   }
 
 		   private void setFieldData(Employee emp) {
-		      personIdField.setText(String.valueOf(emp.getPersonId()));
+		      personIdField.setText(String.valueOf(personId));
 		      fNameField.setText(emp.getFirstName());
 		      lNameField.setText(emp.getLastName());
 		      emailField.setText(emp.getEmail());
@@ -104,9 +109,9 @@ public class EmployeeUI extends JPanel {
 		            if (bean.create(emp) != null)
 		               JOptionPane.showMessageDialog(null,
 		               "New person created successfully.");
-		               createButton.setText("New...");
+		               createButton.setText("New");
 		               break;
-		         case "New...":
+		         case "New":
 		            emp.setPersonId(0);
 		            emp.setFirstName("");
 		            emp.setLastName("");
