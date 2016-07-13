@@ -78,9 +78,7 @@ public class EmployeeBean {
 		try {
 			Class.forName(JDBC_DRIVER);
 			connect = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-			state = connect.createStatement();
-			String query = (" insert into Employees (personId, firstName, lastName,"
-					+ " email, company values (?, ?, ?, ?, ?");
+			String query = ("insert into emp.Employees values(?, ?, ?, ?, ?)"); 
 			PreparedStatement preparedStmt = connect.prepareStatement(query);
 			preparedStmt.setInt(1, emp.getPersonId());
 			preparedStmt.setString(2, emp.getFirstName());
