@@ -31,7 +31,7 @@ public class EmployeeUI extends JPanel {
 	
 	   public EmployeeUI() {
 		      setBorder(new TitledBorder
-		      (new EtchedBorder(),"Employee Details"));
+		      (new EtchedBorder(),"Client Information"));
 		      setLayout(new BorderLayout(5, 5));
 		      add(initFields(), BorderLayout.NORTH);
 		      add(initButtons(), BorderLayout.CENTER);

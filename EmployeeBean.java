@@ -80,10 +80,10 @@ public class EmployeeBean {
 			connect = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
 			String query = ("insert into emp.Employees values(default, ?, ?, ?, ?)"); 
 			PreparedStatement preparedStmt = connect.prepareStatement(query);
-			preparedStmt.setString(2, emp.getFirstName());
-			preparedStmt.setString(3,  emp.getLastName());
-			preparedStmt.setString(4, emp.getEmail());
-			preparedStmt.setString(5, emp.getCompany());
+			preparedStmt.setString(1, emp.getFirstName());
+			preparedStmt.setString(2,  emp.getLastName());
+			preparedStmt.setString(3, emp.getEmail());
+			preparedStmt.setString(4, emp.getCompany());
 			
 			//execute the prepared statement
 			preparedStmt.execute();
