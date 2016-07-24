@@ -78,9 +78,8 @@ public class EmployeeBean {
 		try {
 			Class.forName(JDBC_DRIVER);
 			connect = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-			String query = ("insert into emp.Employees values(?, ?, ?, ?, ?)"); 
+			String query = ("insert into emp.Employees values(default, ?, ?, ?, ?)"); 
 			PreparedStatement preparedStmt = connect.prepareStatement(query);
-			preparedStmt.setInt(1, emp.getPersonId());
 			preparedStmt.setString(2, emp.getFirstName());
 			preparedStmt.setString(3,  emp.getLastName());
 			preparedStmt.setString(4, emp.getEmail());
@@ -97,10 +96,16 @@ public class EmployeeBean {
 		return emp;
 	}
 
-	public Employee getCurrent() {
+	/*public Employee getCurrent() {
 		Employee emp = new Employee();
 		try {
+			Class.forName(JDBC_DRIVER);
+			connect = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+			Statement statement = connect.createStatement();
+			String query = "SELECT * from emp.employees";
+			rs = statement.executeQuery(query);
 			rs.moveToCurrentRow();
+			
 			emp.setPersonId(rs.getInt("personId"));
 			emp.setFirstName(rs.getString("firstName"));
 			emp.setLastName(rs.getString("lastName"));
@@ -108,10 +113,13 @@ public class EmployeeBean {
 			emp.setCompany(rs.getString("company"));
 		} catch (SQLException ex) {
 			ex.printStackTrace();
+		} catch (ClassNotFoundException e) {
+
+			e.printStackTrace();
 		}
 		
 		return emp;
-	}
+	} */
 
 	public void delete() {
 		try {
@@ -125,6 +133,7 @@ public class EmployeeBean {
 
 	public Employee update(Employee emp) {
 		try {
+
 			rs.updateString("firstName", emp.getFirstName());
 			rs.updateString("lastName", emp.getLastName());
 			rs.updateString("email", emp.getEmail());
@@ -134,6 +143,7 @@ public class EmployeeBean {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
+
 		return emp;
 	}
 }

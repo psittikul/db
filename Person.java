@@ -7,7 +7,7 @@
  */
 public abstract class Person {
 	private String firstName, lastName, email, company;
-	private int personId;
+	private String personId;
 	
 	public String getFirstName() {
 		return firstName;
@@ -41,12 +41,12 @@ public abstract class Person {
 		this.company = company;
 	}
 
-	public int getPersonId() {
+	public String getPersonId() {
 		return personId;
 	}
 
-	public void setPersonId(int personId) {
-		this.personId = personId;
+	public void setPersonId(String string) {
+		personId = string;
 	}
 
 	

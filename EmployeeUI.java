@@ -15,7 +15,7 @@ public class EmployeeUI extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	NumberFormat amountFormat = NumberFormat.getNumberInstance();
-	private int personId = 0;
+	private int personId;
 	private JTextField personIdField = new JFormattedTextField(amountFormat);
 	private JTextField fNameField = new JTextField(30);
 	private JTextField lNameField = new JTextField(30);
@@ -72,7 +72,7 @@ public class EmployeeUI extends JPanel {
 
 		   private Employee getFieldData() {
 		      Employee emp = new Employee();
-		      emp.setPersonId(personId);
+		      emp.setPersonId(personIdField.getText());
 		      emp.setFirstName(fNameField.getText());
 		      emp.setLastName(lNameField.getText());
 		      emp.setEmail(emailField.getText());
@@ -112,7 +112,6 @@ public class EmployeeUI extends JPanel {
 		               createButton.setText("New");
 		               break;
 		         case "New":
-		            emp.setPersonId(0);
 		            emp.setFirstName("");
 		            emp.setLastName("");
 		            emp.setEmail("");
@@ -137,7 +136,7 @@ public class EmployeeUI extends JPanel {
 		               "Cannot delete an empty record");
 		               return;
 		            }
-		            emp = bean.getCurrent();
+		            //emp = bean.getCurrent();
 		            bean.delete();
 		            JOptionPane.showMessageDialog(
 		               null,"Person with ID:"
