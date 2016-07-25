@@ -1,4 +1,5 @@
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -11,11 +12,9 @@ import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.table.TableModel;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -24,6 +23,7 @@ import java.text.NumberFormat;
 public class TabbedUI extends JPanel {
 	private EmployeeBean bean = new EmployeeBean();
 	private int tabNumber = 5;
+	private JTabbedPane tabbedPane;
 	/*
 	 * Buttons, fields, etc. for Dashboard
 	 */
@@ -34,6 +34,8 @@ public class TabbedUI extends JPanel {
 	/*
 	 * Buttons, fields, etc. for Client
 	 */
+	private JComponent newPanel = new JPanel();
+	private JComponent panel2;
 	private JButton newButton = new JButton("New Client");
 	private JButton editButton = new JButton("Edit Existing Client");
 	private JButton deleteButton = new JButton("Delete Existing Client(s)");
@@ -42,16 +44,22 @@ public class TabbedUI extends JPanel {
 
 	NumberFormat amountFormat = NumberFormat.getNumberInstance();
 	private int personId;
+	private String first;
+	private String last;
+	private String email;
+	private String company;
 	private JTextField personIdField = new JFormattedTextField(amountFormat);
 	private JTextField fNameField = new JTextField(30);
 	private JTextField lNameField = new JTextField(30);
 	private JTextField emailField = new JTextField(30);
 	private JTextField companyField = new JTextField(30);
+	GridLayout paneLayout= new GridLayout(1, 1);
 	
 	public TabbedUI() {
-		super(new GridLayout(1, 1));
+		super.setLayout(paneLayout);
 
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setLayout(super.getLayout());
 
 		/*
 		 * Dashboard panel
@@ -66,8 +74,9 @@ public class TabbedUI extends JPanel {
 		/*
 		 * Clients panel
 		 */
-		JComponent panel2 = makeTextPanel("Clients");
-		panel2.setPreferredSize(new Dimension(410, 50));
+		panel2 = new JPanel();
+		panel2.setLayout(new GridLayout(2,1));
+		panel2.setPreferredSize(new Dimension(1000, 1000));
 		tabbedPane.addTab("Clients", icon, panel2, "Does twice as much nothing");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		initClientTab(panel2);
@@ -123,7 +132,7 @@ public class TabbedUI extends JPanel {
 		panel.add(filler);
 		return panel;
 	}
-
+	
 	/*
 	 * /** Returns an ImageIcon, or null if the path was invalid. protected
 	 * static ImageIcon createImageIcon(String path) { java.net.URL imgURL =
@@ -136,13 +145,60 @@ public class TabbedUI extends JPanel {
 	 * Inhabit the Clients tabbed pane with the corresponding components
 	 */
 	private void initClientTab(JComponent panel) {
-		panel.add(newButton);
+		JTable table = new JTable();
+		table.setBounds(0, 0, 200, 200);
+		Color color = new Color(888888);
+		table.setBackground(color);
+		panel.add(table);
+		GridBagLayout buttonLayout = new GridBagLayout();
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.ipadx = 40;
+		constraints.ipady = 15;
+		constraints.insets = new Insets(35, 35, 35, 35);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(buttonLayout);
+		buttonPanel.add(newButton, constraints);
 		newButton.addActionListener(new ButtonHandler());
-		panel.add(editButton);
+		buttonPanel.add(editButton, constraints);
 		editButton.addActionListener(new ButtonHandler());
-		panel.add(deleteButton);
+		buttonPanel.add(deleteButton, constraints);
 		deleteButton.addActionListener(new ButtonHandler());
+		panel.add(buttonPanel);
 		
+
+	}
+	
+	public void initNewClientTab () {
+
+		JButton saveButton = new JButton("Save");
+		JButton exitButton = new JButton("Exit");
+		GridLayout layout = new GridLayout(0,2);
+		panel2.setLayout(layout);
+		layout.setHgap(10);
+		layout.setVgap(10);
+		panel2.add(new JLabel("Client ID"));
+		panel2.add(personIdField);
+		panel2.add(new JLabel("Client First Name"));
+		panel2.add(fNameField);
+		panel2.add(new JLabel("Client Last Name"));
+		panel2.add(lNameField);
+		panel2.add(new JLabel("Client Email"));
+		panel2.add(emailField);
+		panel2.add(new JLabel("Client Company"));
+		panel2.add(companyField);
+		
+		GridBagLayout buttonLayout = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		JComponent buttonPanel = new JPanel();
+		buttonPanel.setLayout(buttonLayout);
+		c.ipadx = 95;
+		c.ipady = 15;
+		c.insets = new Insets(55,55,55,55);
+		buttonPanel.add(saveButton, c);
+		buttonPanel.add(exitButton, c);
+		panel2.add(buttonPanel);
+		saveButton.addActionListener(new ButtonHandler());
+		exitButton.addActionListener(new ButtonHandler());
 	}
 
 	/**
@@ -160,6 +216,7 @@ public class TabbedUI extends JPanel {
 		// Display the window.
 		frame.pack();
 		frame.setVisible(true);
+
 	}
 
 	/**
@@ -203,6 +260,7 @@ public class TabbedUI extends JPanel {
 		emailField.setText(emp.getEmail());
 		companyField.setText(emp.getCompany());
 	}
+	
 
 	/**
 	 * The class that implements the ActionListener in order to perform an
@@ -211,10 +269,11 @@ public class TabbedUI extends JPanel {
 	 * @author Patricia Sittikul
 	 *
 	 */
-	private class ButtonHandler implements ActionListener {
+	class ButtonHandler implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Employee emp = getFieldData();
+			JTabbedPane tabbed = tabbedPane;
 			switch (e.getActionCommand()) {
 			case "Save":
 				if (isEmptyFieldData()) {
@@ -223,15 +282,12 @@ public class TabbedUI extends JPanel {
 				}
 				if (bean.create(emp) != null)
 					JOptionPane.showMessageDialog(null, "New person created successfully.");
-				newButton.setText("New");
 				break;
-			case "New":
-				emp.setFirstName("");
-				emp.setLastName("");
-				emp.setEmail("");
-				emp.setCompany("");
-				setFieldData(emp);
-				newButton.setText("Save");
+			case "New Client":
+				panel2.removeAll();
+				initNewClientTab();
+				panel2.revalidate();
+				panel2.repaint();
 				break;
 			case "Update":
 				if (isEmptyFieldData()) {

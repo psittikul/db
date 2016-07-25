@@ -1,5 +1,6 @@
 import java.sql.*;
 import javax.sql.rowset.*;
+import javax.swing.JTable;
 
 /**
  * Main class for all operations between Employee objects and the database, i.e. establishing the connection,
@@ -16,6 +17,8 @@ public class EmployeeBean {
 	static ResultSet rs;
 	static Connection connect;
 	static Statement state;
+	static Object[][] resultSet = new Object[100][100];
+	private static int i = 0;
 
 	
 	public static void main (String [] args) {
@@ -39,17 +42,23 @@ public class EmployeeBean {
 			
 			//STEP 5: Extract data from result set
 			while (rs.next()) {
-				int id = rs.getInt("personId");
+				String id = rs.getString("personId");
+				resultSet[i][0] = id;
 				String comp = rs.getString("company");
+				resultSet[i][4] = comp;
 				String first = rs.getString("firstName");
+				resultSet[i][i] = first;
 				String last = rs.getString("lastName");
+				resultSet[i][2] = last;
 				String email = rs.getString("email");
+				resultSet[i][3] = email;
 			
 				System.out.print("Record #: " + id);
 				System.out.print(" " + first + " ");
 				System.out.print(last + " ");
 				System.out.print(email);
 				System.out.print(" " + comp);
+				i++;
 			}
 			
 		}catch(SQLException se) {
@@ -96,7 +105,7 @@ public class EmployeeBean {
 		return emp;
 	}
 
-	/*public Employee getCurrent() {
+	public Employee getCurrent() {
 		Employee emp = new Employee();
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -106,7 +115,7 @@ public class EmployeeBean {
 			rs = statement.executeQuery(query);
 			rs.moveToCurrentRow();
 			
-			emp.setPersonId(rs.getInt("personId"));
+			emp.setPersonId(rs.getString("personId"));
 			emp.setFirstName(rs.getString("firstName"));
 			emp.setLastName(rs.getString("lastName"));
 			emp.setEmail(rs.getString("email"));
@@ -119,7 +128,7 @@ public class EmployeeBean {
 		}
 		
 		return emp;
-	} */
+	} 
 
 	public void delete() {
 		try {
@@ -146,4 +155,11 @@ public class EmployeeBean {
 
 		return emp;
 	}
+	
+	public Object[][] getResults() {
+		return resultSet;
+	}
 }
+	
+
+

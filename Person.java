@@ -45,8 +45,8 @@ public abstract class Person {
 		return personId;
 	}
 
-	public void setPersonId(String string) {
-		personId = string;
+	public void setPersonId(String id) {
+		personId = id;
 	}
 
 	
